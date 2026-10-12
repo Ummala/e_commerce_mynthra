@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Myntra Clone - Fashion Store</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="nav-left">
+      <div class="logo">
+        <span class="logo-pink">myn</span><span class="logo-red">tra</span>
+      </div>
+      <nav class="nav-links">
+        <a href="#" class="active">Men</a>
+        <a href="#">Women</a>
+        <a href="#">Kids</a>
+        <a href="#">Home &amp; Living</a>
+        <a href="#">Beauty</a>
+        <a href="#" class="sale-link">Studio <span class="new-badge">New</span></a>
+      </nav>
+    </div>
+    <div class="nav-center">
+      <div class="search-bar">
+        <i class="fa fa-search search-icon"></i>
+        <input type="text" id="searchInput" placeholder="Search for products, brands and more" oninput="filterProducts()" />
+      </div>
+    </div>
+    <div class="nav-right">
+      <div class="nav-icon" onclick="showPage('profile')">
+        <i class="fa fa-user"></i>
+        <span>Profile</span>
+      </div>
+      <div class="nav-icon" onclick="showPage('wishlist')">
+        <i class="fa fa-heart"></i>
+        <span>Wishlist</span>
+        <span class="badge" id="wishlistBadge">0</span>
+      </div>
+      <div class="nav-icon" onclick="showPage('cart')">
+        <i class="fa fa-shopping-bag"></i>
+        <span>Bag</span>
+        <span class="badge" id="cartBadge">0</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO BANNER -->
+  <section class="hero" id="homePage">
+    <div class="hero-slider">
+      <div class="hero-slide active" style="background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);">
+        <div class="hero-content">
+          <p class="hero-sub">NEW ARRIVALS</p>
+          <h1>Summer Collection 2026</h1>
+          <p>Up to 70% off on top brands</p>
+          <button class="hero-btn" onclick="scrollToProducts()">Shop Now</button>
+        </div>
+      </div>
+    </div>
+    <!-- Category Pills -->
+    <div class="category-pills">
+      <button class="pill active" onclick="filterByCategory('all', event)">All</button>
+      <button class="pill" onclick="filterByCategory('Men', event)">Men</button>
+      <button class="pill" onclick="filterByCategory('Women', event)">Women</button>
+      <button class="pill" onclick="filterByCategory('Kids', event)">Kids</button>
+      <button class="pill" onclick="filterByCategory('Footwear', event)">Footwear</button>
+      <button class="pill" onclick="filterByCategory('Accessories', event)">Accessories</button>
+    </div>
+  </section>
+
+  <!-- PRODUCTS SECTION -->
+  <section class="products-section" id="productsSection">
+    <div class="section-header">
+      <h2 id="sectionTitle">All Products</h2>
+      <div class="sort-filter">
+        <select onchange="sortProducts(this.value)">
+          <option value="">Sort By</option>
+          <option value="low">Price: Low to High</option>
+          <option value="high">Price: High to Low</option>
+          <option value="discount">Best Discount</option>
+        </select>
+      </div>
+    </div>
+    <div class="products-grid" id="productsGrid"></div>
+  </section>
+
+  <!-- CART PAGE -->
+  <section class="page-section" id="cartPage" style="display:none;">
+    <div class="cart-container">
+      <div class="cart-left">
+        <h2>My Bag (<span id="cartCount">0</span> items)</h2>
+        <div id="cartItems"></div>
+        <button class="continue-btn" onclick="showHome()"><i class="fa fa-arrow-left"></i> Continue Shopping</button>
+      </div>
+      <div class="cart-right">
+        <div class="price-summary">
+          <h3>PRICE DETAILS</h3>
+          <hr/>
+          <div class="price-row">
+            <span>Price (<span id="summaryCount">0</span> items)</span>
+            <span id="summaryMRP">&#8377;0</span>
+          </div>
+          <div class="price-row discount-row">
+            <span>Discount</span>
+            <span id="summaryDiscount" class="green">-&#8377;0</span>
+          </div>
+          <div class="price-row">
+            <span>Delivery Charges</span>
+            <span id="deliveryCharge" class="green">FREE</span>
+          </div>
+          <div class="price-row">
+            <span>Platform Fee</span>
+            <span>&#8377;20</span>
+          </div>
+          <hr/>
+          <div class="price-row total-row">
+            <span><strong>Total Amount</strong></span>
+            <span id="totalAmount"><strong>&#8377;0</strong></span>
+          </div>
+          <div class="savings-info" id="savingsInfo"></div>
+          <button class="place-order-btn" onclick="showPage('billing')">PLACE ORDER</button>
+          <div class="secure-badge"><i class="fa fa-lock"></i> 100% Secure Payments</div>
+        </div>
+        <!-- Coupon -->
+        <div class="coupon-box">
+          <h4><i class="fa fa-tag"></i> Coupons</h4>
+          <div class="coupon-input">
+            <input type="text" id="couponCode" placeholder="Enter coupon code" />
+            <button onclick="applyCoupon()">Apply</button>
+          </div>
+          <p class="coupon-hint">Try: <strong>SAVE10</strong> or <strong>FLAT200</strong></p>
+          <p id="couponMsg" class="coupon-msg"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BILLING / CHECKOUT PAGE -->
+  <section class="page-section" id="billingPage" style="display:none;">
+    <div class="billing-container">
+      <div class="billing-left">
+        <h2>Delivery Address</h2>
+        <form class="billing-form" onsubmit="placeOrder(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label>First Name</label>
+              <input type="text" id="firstName" placeholder="First Name" required />
+            </div>
+            <div class="form-group">
+              <label>Last Name</label>
+              <input type="text" id="lastName" placeholder="Last Name" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="email" placeholder="Email" required />
+          </div>
+          <div class="form-group">
+            <label>Mobile Number</label>
+            <input type="tel" id="mobile" placeholder="10-digit mobile number" pattern="[0-9]{10}" required />
+          </div>
+          <div class="form-group">
+            <label>Address (House No, Street, Area)</label>
+            <textarea id="address" rows="3" placeholder="Enter full address" required></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>City</label>
+              <input type="text" id="city" placeholder="City" required />
+            </div>
+            <div class="form-group">
+              <label>State</label>
+              <select id="state" required>
+                <option value="">Select State</option>
+                <option>Andhra Pradesh</option>
+                <option>Delhi</option>
+                <option>Gujarat</option>
+                <option>Karnataka</option>
+                <option>Kerala</option>
+                <option>Maharashtra</option>
+                <option>Rajasthan</option>
+                <option>Tamil Nadu</option>
+                <option>Uttar Pradesh</option>
+                <option>West Bengal</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>PIN Code</label>
+              <input type="text" id="pincode" placeholder="PIN Code" pattern="[0-9]{6}" required />
+            </div>
+          </div>
+
+          <h2 style="margin-top:2rem;">Payment Method</h2>
+          <div class="payment-options">
+            <label class="payment-option">
+              <input type="radio" name="payment" value="upi" checked />
+              <div class="payment-card">
+                <i class="fa fa-mobile-screen"></i>
+                <span>UPI</span>
+              </div>
+            </label>
+            <label class="payment-option">
+              <input type="radio" name="payment" value="card" />
+              <div class="payment-card">
+                <i class="fa fa-credit-card"></i>
+                <span>Credit / Debit Card</span>
+              </div>
+            </label>
+            <label class="payment-option">
+              <input type="radio" name="payment" value="netbanking" />
+              <div class="payment-card">
+                <i class="fa fa-building-columns"></i>
+                <span>Net Banking</span>
+              </div>
+            </label>
+            <label class="payment-option">
+              <input type="radio" name="payment" value="cod" />
+              <div class="payment-card">
+                <i class="fa fa-money-bill"></i>
+                <span>Cash on Delivery</span>
+              </div>
+            </label>
+          </div>
+
+          <button type="submit" class="place-order-btn" style="margin-top:2rem; width:100%;">
+            <i class="fa fa-shield-halved"></i> PAY &amp; PLACE ORDER
+          </button>
+        </form>
+      </div>
+
+      <div class="billing-right">
+        <div class="order-summary-box">
+          <h3>ORDER SUMMARY</h3>
+          <hr/>
+          <div id="billingSummaryItems"></div>
+          <hr/>
+          <div class="price-row"><span>Subtotal</span><span id="billSubtotal">&#8377;0</span></div>
+          <div class="price-row"><span>Discount</span><span id="billDiscount" class="green">-&#8377;0</span></div>
+          <div class="price-row"><span>Delivery</span><span class="green">FREE</span></div>
+          <div class="price-row"><span>Platform Fee</span><span>&#8377;20</span></div>
+          <hr/>
+          <div class="price-row total-row">
+            <span><strong>Total</strong></span>
+            <span id="billTotal"><strong>&#8377;0</strong></span>
+          </div>
+        </div>
+        <button class="continue-btn" onclick="showPage('cart')" style="margin-top:1rem;">
+          <i class="fa fa-arrow-left"></i> Back to Bag
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- WISHLIST PAGE -->
+  <section class="page-section" id="wishlistPage" style="display:none;">
+    <div class="wishlist-container">
+      <h2>My Wishlist (<span id="wishlistCount">0</span> items)</h2>
+      <div class="products-grid" id="wishlistGrid"></div>
+      <div id="emptyWishlist" class="empty-state" style="display:none;">
+        <i class="fa fa-heart" style="font-size:4rem;color:#eee;"></i>
+        <p>Your wishlist is empty</p>
+        <button class="hero-btn" style="background:#ff3f6c;color:#fff;" onclick="showHome()">Browse Products</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SUCCESS MODAL -->
+  <div class="modal-overlay" id="successModal" style="display:none;">
+    <div class="modal-box">
+      <div class="success-animation">
+        <i class="fa fa-circle-check"></i>
+      </div>
+      <h2>Order Placed Successfully!</h2>
+      <p id="orderMsg"></p>
+      <p class="order-id">Order ID: <strong id="orderId"></strong></p>
+      <p>Estimated Delivery: <strong>3-5 Business Days</strong></p>
+      <button class="place-order-btn" onclick="goHome()">Continue Shopping</button>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-col">
+        <h4>ONLINE SHOPPING</h4>
+        <a href="#">Men</a>
+        <a href="#">Women</a>
+        <a href="#">Kids</a>
+        <a href="#">Home &amp; Living</a>
+        <a href="#">Beauty</a>
+      </div>
+      <div class="footer-col">
+        <h4>CUSTOMER POLICIES</h4>
+        <a href="#">Contact Us</a>
+        <a href="#">FAQ</a>
+        <a href="#">T&amp;C</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">Privacy Policy</a>
+      </div>
+      <div class="footer-col">
+        <h4>EXPERIENCE THE APP</h4>
+        <div class="app-badges">
+          <button class="app-btn"><i class="fab fa-google-play"></i> Google Play</button>
+          <button class="app-btn"><i class="fab fa-apple"></i> App Store</button>
+        </div>
+        <h4 style="margin-top:1rem;">KEEP IN TOUCH</h4>
+        <div class="social-icons">
+          <a href="#"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&#169; 2026 Myntra Clone. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
